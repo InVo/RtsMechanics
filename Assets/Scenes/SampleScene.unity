@@ -951,13 +951,13 @@ GameObject:
   - component: {fileID: 1570550125}
   - component: {fileID: 1570550124}
   - component: {fileID: 1570550128}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!64 &1570550124
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1045,9 +1045,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1570550123}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd53cd850864775488a15749d75b861b, type: 3}
+  m_Script: {fileID: 11500000, guid: 5f78750090cddb143a4123c46a6774b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _camera: {fileID: 963194227}
   _selectionFrame: {fileID: 232274638}
 --- !u!1 &1855309170
 GameObject:
