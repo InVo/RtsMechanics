@@ -9,17 +9,18 @@ namespace SelectObjects.SelectableCheckers
 
         private Vector3[] _vertices;
         
-        public override bool CheckSelected(Camera raycastCamera, Rect screenSelectionRect, Transform rectSpaceTransform)
+        public override bool CheckSelected(Camera raycastCamera, Rect screenSelectionRect, Transform rectSpaceTransform, 
+            ISelectionCoordinatesConverter selectionCoordinatesConverter)
         {
             _vertices = _meshCollider.sharedMesh.vertices;
             foreach (var vertice in _vertices)
             {
                 Vector3 worldSpaceVertice = transform.TransformPoint(vertice);
-                Vector2 localSpaceVertice = rectSpaceTransform.InverseTransformPoint(worldSpaceVertice);
-                if (localSpaceVertice.x < screenSelectionRect.xMin || 
-                    localSpaceVertice.x > screenSelectionRect.xMax ||
-                    localSpaceVertice.y < screenSelectionRect.yMin ||
-                    localSpaceVertice.y > screenSelectionRect.yMax)
+                Vector2 selectionSpaceVertice = selectionCoordinatesConverter.WorldSpaceVerticeToSelectionSpace(worldSpaceVertice);
+                if (selectionSpaceVertice.x < screenSelectionRect.xMin || 
+                    selectionSpaceVertice.x > screenSelectionRect.xMax ||
+                    selectionSpaceVertice.y < screenSelectionRect.yMin ||
+                    selectionSpaceVertice.y > screenSelectionRect.yMax)
                 {
                     return false;
                 }

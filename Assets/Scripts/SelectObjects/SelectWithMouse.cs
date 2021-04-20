@@ -9,42 +9,47 @@ public class SelectWithMouse : EmptyGraphic, IDragHandler, IBeginDragHandler, IE
     [SerializeField] 
     private SelectionFrameBase _selectionFrame;
     
-    private Vector2 _startDragPosition;
-    private Vector2 _endDragPosition;
+    private Vector3 _startDragPosition;
+    private Vector3 _endDragPosition;
     private Rect _selectedRect;
     private List<SelectableBase> _selectables;
+    private ISelectionCoordinatesConverter _selectionCoordinatesConverter;
+
+    protected override void Awake()
+    {
+        _selectionCoordinatesConverter = ScreenSpaceSelectionCoordinatesConverter.Instance;
+    }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
         _selectedRect = Rect.zero;
         _selectionFrame.SetVisibility(true);
         _selectionFrame.UpdateRect(_selectedRect);
-        _startDragPosition = eventData.position;
-        _startDragPosition = transform.InverseTransformPoint(eventData.pointerCurrentRaycast.worldPosition);
+        _startDragPosition = GetPositionFromPointerEventData(eventData);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        _endDragPosition = eventData.position;
-        _endDragPosition = transform.InverseTransformPoint(eventData.pointerCurrentRaycast.worldPosition);
+        _endDragPosition = GetPositionFromPointerEventData(eventData);
         UpdateSelectedRect();
         _selectionFrame.SetVisibility(false);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        _endDragPosition = eventData.position;
-        _endDragPosition = transform.InverseTransformPoint(eventData.pointerCurrentRaycast.worldPosition);
+        _endDragPosition = GetPositionFromPointerEventData(eventData);
         UpdateSelectedRect();
         _selectionFrame.UpdateRect(_selectedRect);
+    }
+    
+    private Vector3 GetPositionFromPointerEventData(PointerEventData eventData)
+    {
+        return transform.InverseTransformPoint(eventData.pointerCurrentRaycast.worldPosition);
     }
 
     private void UpdateSelectedRect()
     {
-        Vector2 center = new Vector2(Math.Min(_endDragPosition.x, _startDragPosition.x),
-            Math.Min(_endDragPosition.y, _startDragPosition.y));
-        Vector2 size = new Vector2(Math.Abs(_endDragPosition.x - _startDragPosition.x), Math.Abs(_endDragPosition.y - _startDragPosition.y));
-        _selectedRect = new Rect(center, size);
+        _selectedRect = _selectionCoordinatesConverter.GetSelectionRect(_startDragPosition, _endDragPosition);
         
         FillSelectablesList();
 
@@ -52,7 +57,7 @@ public class SelectWithMouse : EmptyGraphic, IDragHandler, IBeginDragHandler, IE
 
         foreach (var selectable in _selectables)
         {
-            bool selected = selectable.GetSelectableChecker().CheckSelected(camera, _selectedRect, transform);
+            bool selected = selectable.GetSelectableChecker().CheckSelected(camera, _selectedRect, transform, _selectionCoordinatesConverter);
             selectable.SetSelected(selected);
         }
     }

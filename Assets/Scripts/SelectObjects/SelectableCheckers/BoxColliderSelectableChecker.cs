@@ -7,7 +7,8 @@ namespace SelectObjects.SelectableCheckers
         [SerializeField] 
         private BoxCollider _boxCollider;
         
-        public override bool CheckSelected(Camera raycastCamera, Rect selectionRect, Transform rectSpaceTransform)
+        public override bool CheckSelected(Camera raycastCamera, Rect selectionRect, Transform rectSpaceTransform, 
+            ISelectionCoordinatesConverter coordsConverter)
         {
             var vertices = new Vector3[8];
             var halfSize = _boxCollider.size / 2f;

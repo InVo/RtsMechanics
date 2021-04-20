@@ -21,11 +21,13 @@ public class SelectWithMouseViaRaycast : MonoBehaviour
     private RaycastHit[] _raycastHitsBuffer = new RaycastHit[1];
 
     private int _layerMask;
-    // Update is called once per frame
+
+    private ISelectionCoordinatesConverter _selectionCoordinatesConverter;
 
     private void Awake()
     {
         _layerMask = LayerMask.GetMask("SelectionPlane");
+        _selectionCoordinatesConverter = new LocalSpaceSelectionCoordinatesConverter(transform);
     }
     
     private void Update()
@@ -93,16 +95,13 @@ public class SelectWithMouseViaRaycast : MonoBehaviour
 
     private void UpdateSelectedRect()
     {
-        Vector2 position = new Vector2(Math.Min(_endDragPosition.x, _startDragPosition.x),
-            Math.Min(_endDragPosition.z, _startDragPosition.z));
-        Vector2 size = new Vector2(Math.Abs(_endDragPosition.x - _startDragPosition.x), Math.Abs(_endDragPosition.z - _startDragPosition.z));
-        _selectedRect = new Rect(position, size);
+        _selectedRect = _selectionCoordinatesConverter.GetSelectionRect(_startDragPosition, _endDragPosition);
 
         Camera camera = Camera.main;
 
         foreach (var selectable in Selectables.SelectableObjects)
         {
-            bool selected = selectable.GetSelectableChecker().CheckSelected(camera, _selectedRect, transform);
+            bool selected = selectable.GetSelectableChecker().CheckSelected(camera, _selectedRect, transform, _selectionCoordinatesConverter);
             selectable.SetSelected(selected);
         }
     }
