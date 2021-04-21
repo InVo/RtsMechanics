@@ -25,8 +25,7 @@ namespace SelectObjects.SelectableCheckers
             foreach (var vertice in vertices)
             {
                 Vector3 worldSpaceVertice = transform.TransformPoint(vertice);
-                //Vector2 localSpaceVertice = raycastCamera.WorldToScreenPoint(worldSpaceVertice);
-                Vector3 localSpaceVertice = rectSpaceTransform.InverseTransformPoint(worldSpaceVertice);
+                Vector3 localSpaceVertice = coordsConverter.WorldSpaceVerticeToSelectionSpace(worldSpaceVertice);
                 if (localSpaceVertice.x < selectionRect.xMin || 
                     localSpaceVertice.x > selectionRect.xMax ||
                     localSpaceVertice.y < selectionRect.yMin ||

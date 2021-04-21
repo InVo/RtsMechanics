@@ -17,7 +17,7 @@ public class SelectWithMouse : EmptyGraphic, IDragHandler, IBeginDragHandler, IE
 
     protected override void Awake()
     {
-        _selectionCoordinatesConverter = ScreenSpaceSelectionCoordinatesConverter.Instance;
+        _selectionCoordinatesConverter = new ScreenSpaceSelectionCoordinatesConverter(Camera.main);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -44,7 +44,7 @@ public class SelectWithMouse : EmptyGraphic, IDragHandler, IBeginDragHandler, IE
     
     private Vector3 GetPositionFromPointerEventData(PointerEventData eventData)
     {
-        return transform.InverseTransformPoint(eventData.pointerCurrentRaycast.worldPosition);
+        return _selectionCoordinatesConverter.GetPositionFromPointerEventData(eventData);
     }
 
     private void UpdateSelectedRect()

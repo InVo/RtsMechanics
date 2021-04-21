@@ -6,9 +6,12 @@ using UnityEngine.EventSystems;
 
 public class ScreenSpaceSelectionCoordinatesConverter : ISelectionCoordinatesConverter
 {
-    public static ScreenSpaceSelectionCoordinatesConverter Instance => _instance ??= new ScreenSpaceSelectionCoordinatesConverter();
-
-    private static ScreenSpaceSelectionCoordinatesConverter _instance;
+    private Camera _raycastCamera;
+    
+    public ScreenSpaceSelectionCoordinatesConverter(Camera raycastCamera)
+    {
+        _raycastCamera = raycastCamera;
+    }
 
     public Vector3 GetPositionFromPointerEventData(PointerEventData eventData)
     {
@@ -25,6 +28,6 @@ public class ScreenSpaceSelectionCoordinatesConverter : ISelectionCoordinatesCon
 
     public Vector3 WorldSpaceVerticeToSelectionSpace(Vector3 vertice)
     {
-        throw new System.NotImplementedException();
+        return _raycastCamera.WorldToScreenPoint(vertice);
     }
 }
