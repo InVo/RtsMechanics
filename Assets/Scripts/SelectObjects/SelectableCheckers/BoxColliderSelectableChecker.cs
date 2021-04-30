@@ -6,23 +6,27 @@ namespace SelectObjects.SelectableCheckers
     {
         [SerializeField] 
         private BoxCollider _boxCollider;
+
+        private Vector3[] _vertices = new Vector3[8];
+        
+        private void Awake()
+        {
+            var halfSize = _boxCollider.size / 2f;
+            var center = _boxCollider.center;
+            _vertices[0] = center + new Vector3(halfSize.x, halfSize.y, halfSize.z);
+            _vertices[1] = center + new Vector3(halfSize.x, halfSize.y, -halfSize.z);
+            _vertices[2] = center + new Vector3(halfSize.x, -halfSize.y, halfSize.z);
+            _vertices[3] = center + new Vector3(halfSize.x, -halfSize.y, -halfSize.z);
+            _vertices[4] = center + new Vector3(-halfSize.x, halfSize.y, halfSize.z);
+            _vertices[5] = center + new Vector3(-halfSize.x, halfSize.y, -halfSize.z);
+            _vertices[6] = center + new Vector3(-halfSize.x, -halfSize.y, halfSize.z);
+            _vertices[7] = center + new Vector3(-halfSize.x, -halfSize.y, -halfSize.z);
+        }
         
         public override bool CheckSelected(Camera raycastCamera, Rect selectionRect, Transform rectSpaceTransform, 
             ISelectionCoordinatesConverter coordsConverter)
         {
-            var vertices = new Vector3[8];
-            var halfSize = _boxCollider.size / 2f;
-            var center = _boxCollider.center;
-            vertices[0] = center + new Vector3(halfSize.x, halfSize.y, halfSize.z);
-            vertices[1] = center + new Vector3(halfSize.x, halfSize.y, -halfSize.z);
-            vertices[2] = center + new Vector3(halfSize.x, -halfSize.y, halfSize.z);
-            vertices[3] = center + new Vector3(halfSize.x, -halfSize.y, -halfSize.z);
-            vertices[4] = center + new Vector3(-halfSize.x, halfSize.y, halfSize.z);
-            vertices[5] = center + new Vector3(-halfSize.x, halfSize.y, -halfSize.z);
-            vertices[6] = center + new Vector3(-halfSize.x, -halfSize.y, halfSize.z);
-            vertices[7] = center + new Vector3(-halfSize.x, -halfSize.y, -halfSize.z);
- 
-            foreach (var vertice in vertices)
+            foreach (var vertice in _vertices)
             {
                 Vector3 worldSpaceVertice = transform.TransformPoint(vertice);
                 Vector3 localSpaceVertice = coordsConverter.WorldSpaceVerticeToSelectionSpace(worldSpaceVertice);
